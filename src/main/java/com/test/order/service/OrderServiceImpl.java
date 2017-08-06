@@ -2,10 +2,15 @@ package com.test.order.service;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.test.order.po.Order;
 
@@ -17,7 +22,10 @@ public class OrderServiceImpl implements OrderService {
 	
 	@Override
 	public Order findOrderById(Long id) {
-		List<Order> list = sessionFactory.getCurrentSession().createCriteria(Order.class).add(Restrictions.eq("id", id)).list();
+		String sql = "select id from `order` where id="+id;
+		SQLQuery query = sessionFactory.getCurrentSession().createSQLQuery(sql);
+		List<Order> list = query.list();
+		
 		if(list != null && !list.isEmpty()) {
 			return list.get(0);
 		}
